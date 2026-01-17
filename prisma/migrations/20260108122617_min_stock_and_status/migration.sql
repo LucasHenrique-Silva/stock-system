@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "produtos" ADD COLUMN     "minboxInStock" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "minbundleInStock" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "minotherInStock" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "minunitsInStock" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "status" BOOLEAN NOT NULL DEFAULT true;

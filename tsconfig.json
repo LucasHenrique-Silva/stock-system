@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",           // Versão do JavaScript gerada
+    "module": "commonjs",         // Sistema de módulos (CommonJS para Node.js)
+    "lib": ["ES2022"],            // Bibliotecas disponíveis
+    "outDir": "./dist",           // Pasta onde ficará o código compilado
+    "rootDir": "./src",           // Pasta onde está o código fonte
+    "strict": true,               // Ativa todas as verificações de tipo
+    "esModuleInterop": true,      // Compatibilidade com módulos ES6
+    "skipLibCheck": true,         // Ignora checagem de tipos em libs
+    "forceConsistentCasingInFileNames": true, // Força consistência em nomes de arquivos
+    "resolveJsonModule": true,    // Permite importar arquivos JSON
+    "moduleResolution": "node",   // Como encontrar módulos
+    "allowSyntheticDefaultImports": true // Permite import default
+  },
+  "include": ["src/**/*", "prisma/seed.ts"],        // Quais arquivos compilar
+  "exclude": ["node_modules", "dist"] // Quais arquivos ignorar
+}

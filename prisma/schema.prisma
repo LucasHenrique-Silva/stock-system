@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//////////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////////
+
+enum UserRole {
+  ADMINISTRADOR
+  GERENTE
+  FUNCIONARIO
+}
+
+enum StockEntryType {
+  COMPRA      // entrada real com custo (impacta lucro)
+  AJUSTE      // correção positiva (neutro)
+  DEVOLUCAO   // devolução de cliente (neutro)
+}
+
+enum StockExitType {
+  VENDA       // gera receita
+  AJUSTE      // correção negativa (neutro)
+  PERDA       // prejuízo
+  VENCIMENTO  // prejuízo
+}
+
+//////////////////////////////////////////////////////
+// USER
+//////////////////////////////////////////////////////
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(FUNCIONARIO)
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Produtos
+  createdProducts Product[] @relation("produtosCriados")
+  updatedProducts Product[] @relation("produtosAtualizados")
+
+  // 🔴 ALTERAÇÃO IMPORTANTE
+  // Relacionamento com movimentações de estoque
+  // Necessário para relatórios por vendedor
+  stockEntries StockEntry[]
+  stockExits   StockExit[]
+
+  @@map("usuarios")
+}
+
+//////////////////////////////////////////////////////
+// PRODUCT
+//////////////////////////////////////////////////////
+
+model Product {
+  id     String @id @default(cuid())
+  name   String
+  status Boolean @default(true)
+  volume String
+
+  unitPrice Decimal @db.Decimal(10, 2)
+
+
+  // =========================
+  // ESTOQUE ATUAL (CACHE)
+  // =========================
+  // ⚠️ Esses campos SÓ DEVEM ser alterados via
+  // StockEntry / StockExit (transação)
+  unitsInStock   Int @default(0)
+ 
+
+  minunitsInStock  Int @default(0)
+
+
+  availableUnit   Boolean @default(true)
+  availableBox    Boolean @default(false)
+  availableBundle Boolean @default(false)
+  availableOther  Boolean @default(false)
+
+  unitsPerBox    Int?
+  unitsPerBundle Int?
+  unitsPerOther  Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryId  String?
+  createdById String
+  updatedById String?
+
+  category  Category? @relation(fields: [categoryId], references: [id])
+  createdBy User      @relation("produtosCriados", fields: [createdById], references: [id])
+  updatedBy User?     @relation("produtosAtualizados", fields: [updatedById], references: [id])
+
+  barcodes ProductBarcode[]
+
+  // 🔴 CAMPOS QUE FALTAVAM
+  stockEntryItems StockEntryItem[]
+  stockExitItems  StockExitItem[]
+
+  @@map("produtos")
+}
+
+
+//////////////////////////////////////////////////////
+// PRODUCT BARCODE
+//////////////////////////////////////////////////////
+
+model ProductBarcode {
+  id        String @id @default(cuid())
+  barcode   String @unique
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+//////////////////////////////////////////////////////
+// CATEGORY
+//////////////////////////////////////////////////////
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+
+  @@map("categorias")
+}
+
+//////////////////////////////////////////////////////
+// STOCK ENTRY (ENTRADA)
+//////////////////////////////////////////////////////
+
+model StockEntry {
+  id   String @id @default(cuid())
+
+  // COMPRA / AJUSTE / DEVOLUCAO
+  type StockEntryType @default(COMPRA)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  // 🔴 ALTERAÇÃO IMPORTANTE
+  // Índice para relatório por período
+  @@index([createdAt])
+
+  createdById String
+  createdBy   User @relation(fields: [createdById], references: [id])
+
+  items StockEntryItem[]
+
+  @@map("estoque_entradas")
+}
+
+model StockEntryItem {
+  id            String     @id @default(cuid())
+
+  stockEntryId  String
+  stockEntry    StockEntry @relation(fields: [stockEntryId], references: [id])
+
+  productId     String
+  product       Product    @relation(fields: [productId], references: [id])
+
+  quantity      Int
+  unitCost      Decimal?   @db.Decimal(10, 2)
+
+  lotNumber     String?
+  expiresAt     DateTime?  // ⬅️ ESTE CAMPO NÃO EXISTE HOJE NO SEU SCHEMA
+
+  createdAt     DateTime   @default(now())
+}
+
+
+//////////////////////////////////////////////////////
+// STOCK EXIT (SAÍDA)
+//////////////////////////////////////////////////////
+
+model StockExit {
+  id String @id @default(cuid())
+
+  // VENDA / PERDA / VENCIMENTO / AJUSTE
+  type StockExitType @default(VENDA)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  // 🔴 ALTERAÇÃO IMPORTANTE
+  // Índice para relatório
+  @@index([createdAt])
+
+  createdById String
+  createdBy   User @relation(fields: [createdById], references: [id])
+
+  items StockExitItem[]
+
+  @@map("estoque_saidas")
+}
+
+model StockExitItem {
+  id String @id @default(cuid())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Int
+
+  // Preço usado na saída
+  // obrigatório se type = VENDA
+  unitPrice Decimal? @db.Decimal(10, 2)
+
+  exitId String
+  exit   StockExit @relation(fields: [exitId], references: [id], onDelete: Cascade)
+
+  @@map("estoque_saida_itens")
+}
