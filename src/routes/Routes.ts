@@ -23,6 +23,8 @@ import { findProductRoutes } from "./find/findProduct.routes";
 import { findProductBarcodeRoutes } from "./find/findProductBarcode.routes";
 import { findCategoryRoute } from "./find/findCategory.routes";
 import { findStockEntryRoutes } from "./find/findStockEntry.routes";
+import { findStockExitRoutes } from "./find/findStockExit.routes";
+Routes.use("/find/stock-exits", findStockExitRoutes);
 Routes.use("/find/stock-entries", findStockEntryRoutes);
 Routes.use("/find/users", findUserRoutes);
 Routes.use("/find", findProductRoutes);
@@ -53,6 +55,8 @@ Routes.use("/update", updateCategoryRoutes)
 
 //REPORTS
 import { dailyFinancialReportRoutes } from "./reports/dailyFinancialReport.routes";
+//import { weeklyFinancialReportRoutes } from "./reports/weeklyFinancialReport.routes";
+//Routes.use("/reports", weeklyFinancialReportRoutes);
 Routes.use("/reports", dailyFinancialReportRoutes);
 
 
