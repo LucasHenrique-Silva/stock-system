@@ -9,6 +9,8 @@ import { createUserRoutes } from "./create/createUser.routes";
 import { createProductRoutesBarcode } from "./create/createProductBarcode.routes";
 import { createCategoryRoutes } from "./create/createCategory.routes";
 import { createStockEntryRoutes } from "./create/createStockEntry.routes";
+import { createStockExitRoutes } from "./create/createStockExit.routes";
+Routes.use("/create", createStockExitRoutes);
 Routes.use("/create", createStockEntryRoutes);
 Routes.use("/create", createProductRoutes);
 Routes.use("/create", createUserRoutes);

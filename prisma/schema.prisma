@@ -24,11 +24,19 @@ enum StockEntryType {
 }
 
 enum StockExitType {
-  VENDA       // gera receita
-  AJUSTE      // correção negativa (neutro)
-  PERDA       // prejuízo
-  VENCIMENTO  // prejuízo
+  VENDA
+  AJUSTE
+  PERDA
+  VENCIMENTO
 }
+
+enum SaleType {
+  UNIT
+  BOX
+  BUNDLE
+  OTHER
+}
+
 
 //////////////////////////////////////////////////////
 // USER
@@ -193,15 +201,14 @@ model StockEntryItem {
 model StockExit {
   id String @id @default(cuid())
 
-  // VENDA / PERDA / VENCIMENTO / AJUSTE
   type StockExitType @default(VENDA)
-
   notes String?
+
+  // 🔴 TOTAL DA OPERAÇÃO
+  total Decimal @db.Decimal(12, 2) 
 
   createdAt DateTime @default(now())
 
-  // 🔴 ALTERAÇÃO IMPORTANTE
-  // Índice para relatório
   @@index([createdAt])
 
   createdById String
@@ -212,20 +219,31 @@ model StockExit {
   @@map("estoque_saidas")
 }
 
+
+
 model StockExitItem {
   id String @id @default(cuid())
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
+  // UNIT | BOX | BUNDLE | OTHER
+  saleType SaleType
+
+  // Quantidade informada pelo usuário
   quantity Int
 
-  // Preço usado na saída
-  // obrigatório se type = VENDA
-  unitPrice Decimal? @db.Decimal(10, 2)
+  // Quantidade REAL abatida do estoque
+  unitsRemoved Int
+
+  // Obrigatório quando VENDA
+  unitPrice Decimal @db.Decimal(10, 2)
+
+  // unitPrice * unitsRemoved
+  totalPrice Decimal @db.Decimal(10, 2)
 
   exitId String
-  exit   StockExit @relation(fields: [exitId], references: [id], onDelete: Cascade)
+  exit   StockExit @relation(fields: [exitId],references: [id],onDelete: Cascade)
 
   @@map("estoque_saida_itens")
 }

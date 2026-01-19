@@ -13,7 +13,15 @@ export class findProductBarCodeService {
                     select: {
                         id: true,
                         name: true,
-                        unitPrice: true,},
+                        unitPrice: true,
+                        availableBox:true,
+                        availableBundle:true,
+                        availableUnit:true,
+                        availableOther:true,
+                        unitsPerBox:true,
+                        unitsPerBundle:true,
+                        unitsPerOther:true,}
+                    ,
                 },
             },
 
