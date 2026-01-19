@@ -5,7 +5,7 @@ import { DailyFinancialReportService } from "../../services/reports/dailyFinanci
 export class DailyFinancialReportController {
   async handle(req: Request, res: Response) {
     const { date, view } = req.query;
-    console.log(date, view);
+
     const service = new DailyFinancialReportService();
     const report = await service.execute(String(date));
 
