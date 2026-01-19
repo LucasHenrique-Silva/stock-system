@@ -51,6 +51,11 @@ Routes.use("/update", updateProductRoutes);
 Routes.use("/update", updateCategoryRoutes)
 
 
+//REPORTS
+import { dailyFinancialReportRoutes } from "./reports/dailyFinancialReport.routes";
+Routes.use("/reports", dailyFinancialReportRoutes);
+
+
 
 
 
