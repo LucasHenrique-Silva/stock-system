@@ -1,15 +1,8 @@
 import { Router } from "express";
-import { DailyFinancialReportController } from "../../controllers/reports/dailyFinancialReportController";
-import { WeeklyFinancialReportController } from "../../controllers/reports/weeklyFinancialReportController";
-import { MonthlyFinancialReportController } from "../../controllers/reports/monthlyFinancialReportController";
+import { FinancialReportController } from "../../controllers/reports/FinancialReportController";
 
 export const FinancialReportRoutes = Router();
-const daily = new DailyFinancialReportController();
-const weekly = new WeeklyFinancialReportController();
-const monthly = new MonthlyFinancialReportController();
+const FinancialReport = new FinancialReportController();
 
-FinancialReportRoutes.get("/daily", daily.handle.bind(daily));
-FinancialReportRoutes.get("/weekly", weekly.handle.bind(weekly));
-FinancialReportRoutes.get("/monthly", monthly.handle.bind(monthly));
-
+FinancialReportRoutes.get("/", FinancialReport.handle.bind(FinancialReport));
 
