@@ -13,9 +13,9 @@ export class DailyFinancialReportController {
     if (view === "summary") {
       return res.json({
         date: report.date,
-        total: report.profit,
-        revenue: report.revenue,
-        cost: report.cost,
+        total: Number(report.profit.toFixed(2)),
+  revenue: Number(report.revenue.toFixed(2)),
+  cost: Number(report.cost.toFixed(2)),
         result: report.result,
       });
     }
@@ -24,12 +24,12 @@ export class DailyFinancialReportController {
     return res.json({
       date: report.date,
       revenue: {
-        total: report.revenue,
+        total: Number(report.revenue.toFixed(2)),
       },
       cost: {
-        total: report.cost,
+        total: Number(report.cost.toFixed(2)),
       },
-      profit: report.profit,
+      profit: Number(report.profit.toFixed(2)),
       result: report.result,
     });
   }

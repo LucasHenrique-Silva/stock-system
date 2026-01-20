@@ -1,8 +1,8 @@
 // src/controllers/report/dailyFinancialReportController.ts
 import { Request, Response } from "express";
-import { WeeklyFinancialReportService } from "../../services/reports/weeklyFinancialReportService";
+import { MonthlyFinancialReportService } from "../../services/reports/monthlyFinancialReportService";
 
-export class WeeklyFinancialReportController {
+export class MonthlyFinancialReportController {
   async handle(req: Request, res: Response) {
     const { date, view } = req.query;
 
@@ -10,7 +10,7 @@ export class WeeklyFinancialReportController {
       return res.status(400).json({ error: "Data obrigatória" });
     }
 
-    const service = new WeeklyFinancialReportService();
+    const service = new MonthlyFinancialReportService();
     const report = await service.execute(String(date));
 
     // VISÃO RESUMIDA

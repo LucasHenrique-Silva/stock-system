@@ -54,13 +54,9 @@ Routes.use("/update", updateCategoryRoutes)
 
 
 //REPORTS
-import { dailyFinancialReportRoutes } from "./reports/dailyFinancialReport.routes";
-import { weeklyFinancialReportRoutes } from "./reports/weeklyFinancialReport.routes";
-Routes.use("/reports", weeklyFinancialReportRoutes);
-Routes.use("/reports", dailyFinancialReportRoutes);
+import { FinancialReportRoutes } from "./reports/FinancialReport.routes";
 
-
-
+Routes.use("/reports", FinancialReportRoutes);
 
 
 
