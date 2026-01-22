@@ -1,8 +1,13 @@
 import { CreateUserController } from "../../controllers/create/createUserController";
 import { Router } from "express";
+import { authMiddleware } from "../../middleware/authMiddleware";
 
 export const createUserRoutes = Router();
 const controller = new CreateUserController();
 
-createUserRoutes.post("/user", (req, res) => controller.handle(req, res));
-
+// rota protegida
+createUserRoutes.post(
+  "/user",
+  authMiddleware, // ✅ middleware adiciona userId
+  (req, res) => controller.handle(req as any, res) // opcional: forçar tipo temporariamente
+);
