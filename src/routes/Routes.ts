@@ -58,5 +58,8 @@ import { FinancialReportRoutes } from "./reports/FinancialReport.routes";
 
 Routes.use("/reports", FinancialReportRoutes);
 
+//AUTH
+import { authRoutes } from "./auth/login.routes";
+Routes.use("/auth", authRoutes);
 
 
