@@ -30,7 +30,9 @@ export class LoginService{
         }
 
          const token = jwt.sign(
-  { userId: userExists.id },
+  { userId: userExists.id,
+    role: userExists.role
+   },
   JWT_SECRET,
   { expiresIn: JWT_EXPIRES_IN } as SignOptions
 );

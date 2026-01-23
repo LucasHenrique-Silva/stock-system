@@ -5,11 +5,12 @@ import bcrypt from "bcryptjs";
 interface CreateUserDTO {
   name: string;
   email: string;
+  role: any;
   password: string;
 }
 
 export class CreateUserService {
-  async execute({ name, email, password }: CreateUserDTO) {
+  async execute({ name, email, role, password }: CreateUserDTO) {
     const emailExists = await prisma.user.findUnique({
       where: { email },
     });
@@ -25,6 +26,8 @@ export class CreateUserService {
         name,
         email,
         password: hashedPassword,
+        role: role,
+      
       
       },
       select: {
