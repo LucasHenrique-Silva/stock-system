@@ -36,4 +36,26 @@ export class FindStockExitService {
     return stockExits;
   }
 
+    async findByDateRange(startDate: Date, endDate: Date) {
+  return prisma.stockExit.findMany({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
+      },
+      createdBy: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+}
+
 }
